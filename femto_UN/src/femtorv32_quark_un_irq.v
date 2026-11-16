@@ -60,6 +60,12 @@ module FemtoRV32(
 
    reg [3:0] state;
    reg       writeBack;   // escritura en el banco de registros
+   reg  [31:2] instr;
+   wire        funct3IsShift;
+   wire [31:0] writeBackData;
+   wire [31:0] LOAD_data;
+   wire [15:0] LOAD_halfword;
+   wire  [7:0] LOAD_byte;
 
  /***************************************************************************/
  // Instruction decoding.
@@ -162,7 +168,7 @@ module FemtoRV32(
      (funct3Is[7]  ? aluIn1 & aluIn2                                 : 32'b0) |
      (funct3IsShift ? aluReg                                         : 32'b0) ;
 
-   wire funct3IsShift = funct3Is[1] | funct3Is[5];
+   assign funct3IsShift = funct3Is[1] | funct3Is[5];
 
    always @(posedge clk) begin
       if (!reset) begin
@@ -205,7 +211,7 @@ module FemtoRV32(
    /***************************************************************************/
 
    reg  [ADDR_WIDTH-1:0] PC; // The program counter.
-   reg  [31:2] instr;        // Latched instruction. Note that bits 0 and 1 are
+   // reg [31:2] instr;        // Latched instruction. Note that bits 0 and 1 are
                              // ignored (not used in RV32I base instr set).
 
    wire [ADDR_WIDTH-1:0] PCplus4 = PC + 4;
@@ -291,7 +297,7 @@ module FemtoRV32(
    // The value written back to the register file.
    /***************************************************************************/
 
-   wire [31:0] writeBackData  =
+   assign writeBackData =
       (isSYSTEM            ? CSR_read   : 32'b0) |  // SYSTEM (CSR)
       (isLUI               ? Uimm       : 32'b0) |  // LUI
       (isALU               ? aluOut     : 32'b0) |  // ALUreg, ALUimm
@@ -321,15 +327,15 @@ module FemtoRV32(
    wire LOAD_sign =
 	!instr[14] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
 
-   wire [31:0] LOAD_data =
+   assign LOAD_data =
          mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
      mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} :
                           mem_rdata ;
 
-   wire [15:0] LOAD_halfword =
+   assign LOAD_halfword =
 	       loadstore_addr[1] ? mem_rdata[31:16] : mem_rdata[15:0];
 
-   wire  [7:0] LOAD_byte =
+   assign LOAD_byte =
 	       loadstore_addr[0] ? LOAD_halfword[15:8] : LOAD_halfword[7:0];
 
    // STORE

@@ -71,6 +71,10 @@ module femto (
    wire [3:0]  mem_wmask;
 
    wire mapped_spi_flash_rbusy;
+   wire spi_ram_rbusy;
+   wire spi_ram_wbusy;
+   wire [31:0] dpram_dout;
+   reg  [6:0] cs;
 
    FemtoRV32 CPU(
       .clk(clk),
@@ -87,8 +91,8 @@ module femto (
    wire [31:0] RAM_rdata;
    wire  wr = |mem_wmask;
    wire  rd = mem_rstrb; 
-   wire spi_ram_rbusy;
-   wire spi_ram_wbusy;
+   // wire spi_ram_rbusy;
+   // wire spi_ram_wbusy;
    MappedSPIRAM mapped_spi_ram(
       .clk(clk),
       .reset(resetn),
@@ -119,7 +123,28 @@ module femto (
    );
 
    wire [31:0] uart_dout;
-   wire [31:0] dpram_dout;
+   // wire [31:0] dpram_dout;
+
+   // ============== OpenRAM Internal SRAM (16x8) ========================
+   wire [8:0] sram_dout_raw;
+   wire [7:0] sram_dout = sram_dout_raw[7:0];
+   wire sram_cs = (mem_address[31:16] == 16'h0041);
+   wire sram_csb = ~(sram_cs & (mem_rstrb | wr));
+   wire sram_web = ~(sram_cs & wr);
+
+   sky130_sram_16x8 u_sram(
+`ifdef USE_POWER_PINS
+      .vccd1(1'b1),
+      .vssd1(1'b0),
+`endif
+      .clk0(clk),
+      .csb0(sram_csb),
+      .web0(sram_web),
+      .spare_wen0(1'b0),
+      .addr0(mem_address[5:2]),
+      .din0({1'b0, mem_wdata[7:0]}),
+      .dout0(sram_dout_raw)
+   );
 
   peripheral_uart #(
      .clk_freq(27000000),    // 27000000 for gowin
@@ -141,13 +166,13 @@ module femto (
   // se hace con los 8 bits mas significativos de mem_addr
   // Se asigna el rango de la memoria de programa 0x00000000 - 0x003FFFFF
   // ====================================================================
-  reg [6:0]cs;  // CHIP-SELECT
+  // reg [6:0] cs;  // CHIP-SELECT
   always @*
   begin
       case (mem_address[31:16])	// direcciones - chip_select
         16'h0000: cs= 7'b0000001; 	//RAM
         16'h0040: cs= 7'b0100000; 	//uart
-//        16'h0041: cs= 7'b0010000;	//gpio
+        16'h0041: cs= 7'b0010000;	//OpenRAM (16x8)
 //        16'h0042: cs= 7'b0001000;	//mult
 //        16'h0043: cs= 7'b0000100;	//div
 //        16'h0044: cs= 7'b0000010;	//bin_to_bcd
@@ -161,7 +186,7 @@ module femto (
       case (cs)
         7'b1000000: mem_rdata = dpram_dout;
         7'b0100000: mem_rdata = uart_dout;
-//        7'b0010000: mem_rdata = gpio_dout;
+        7'b0010000: mem_rdata = {24'd0, sram_dout};
 //        7'b0001000: mem_rdata = mult_dout;
 //        7'b0000100: mem_rdata = div_dout;
 //        7'b0000010: mem_rdata = bin2bcd_dout;

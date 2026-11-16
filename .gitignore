@@ -1,0 +1,14 @@
+# Simulación Cocotb / Icarus
+build/
+*.vcd
+*.fst
+*.xml
+__pycache__/
+*.pyc
+build/
+*.vcd
+*.fst
+*.xml
+__pycache__/
+*.pyc
+venv*/

@@ -39,6 +39,16 @@ assign debug_flash_rdata = dut.femto0.RAM_rdata;
 assign debug_flash_raw = dut.femto0.mapped_spi_flash.rcv_data;
 assign debug_instr = dut.femto0.CPU.instr;
 
+
+wire [31:0] debug_x1_sram_base = dut.femto0.CPU.registerFile[1];
+wire [31:0] debug_x2_dato_wr   = dut.femto0.CPU.registerFile[2];
+wire [31:0] debug_x3_dato_rd   = dut.femto0.CPU.registerFile[3];
+wire        debug_sram_csb0    = dut.femto0.u_sram.csb0;
+wire        debug_sram_web0    = dut.femto0.u_sram.web0;
+wire [3:0]  debug_sram_addr0   = dut.femto0.u_sram.addr0;
+wire [8:0]  debug_sram_din0    = dut.femto0.u_sram.din0;
+wire [8:0]  debug_sram_dout0   = dut.femto0.u_sram.dout0;
+
 tt_um_femto dut (
     .ui_in(ui_in),
     .uo_out(uo_out),
@@ -49,5 +59,18 @@ tt_um_femto dut (
     .clk(clk),
     .rst_n(rst_n)
 );
+
+
+
+
+initial begin
+    $dumpfile("tt_um_femto_openram.vcd");
+    $dumpvars(0, tt_um_femto_cocotb);
+    $dumpvars(0, dut.femto0.CPU.registerFile[1]);
+    $dumpvars(0, dut.femto0.CPU.registerFile[2]);
+    $dumpvars(0, dut.femto0.CPU.registerFile[3]);
+    $dumpvars(0, dut.femto0.CPU.registerFile[4]);
+    $dumpvars(0, dut.femto0.CPU.registerFile[5]);
+end
 
 endmodule
