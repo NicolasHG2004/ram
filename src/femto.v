@@ -133,10 +133,7 @@ module femto (
    wire sram_web = ~(sram_cs & wr);
 
    sky130_sram_32x32 u_sram(
-`ifdef COCOTB_SIM
-      .vccd1(1'b1),
-      .vssd1(1'b0),
-`else
+`ifndef COCOTB_SIM
       .vccd1(),
       .vssd1(),
 `endif
