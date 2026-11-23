@@ -22,8 +22,8 @@ project:
     - "MappedSPIFlash.v"
     - "perip_uart.v"
     - "uart.v"
-    - "femtorv32_quark.v"
-    - "sky130_sram_16x8_bb.v"
+    - "femtorv32_quark_un_irq.v"
+    - "sky130_sram_32x32_bb.v"
     
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.

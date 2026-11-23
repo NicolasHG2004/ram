@@ -62,7 +62,10 @@ async def execute_lui_from_cocotb_spi_flash(dut):
     dut.ram_miso.value = 0
     dut.flash_miso.value = 0
 
-    clock = Clock(dut.clk, 37038, unit="ps")
+    try:
+        clock = Clock(dut.clk, 37038, units="ps")  # ~27 MHz
+    except TypeError:
+        clock = Clock(dut.clk, 37038, unit="ps")
     cocotb.start_soon(clock.start())
 
     flash = SpiFlash(dut, PROGRAM)
@@ -83,15 +86,15 @@ async def execute_lui_from_cocotb_spi_flash(dut):
         if sample != previous and len(history) < 20:
             history.append(sample)
             previous = sample
-        if int(dut.debug_x6.value) == 0x00400000:
+        if dut.debug_x6.value.is_resolvable and int(dut.debug_x6.value) == 0x00400000:
             break
     else:
         raise AssertionError(
-            f"t1 no recibió 0x00400000; valor final: 0x{int(dut.debug_x6.value):08x}, "
-            f"PC=0x{int(dut.debug_pc.value):06x}, "
-            f"flash_rdata=0x{int(dut.debug_flash_rdata.value):08x}, "
-            f"flash_raw=0x{int(dut.debug_flash_raw.value):08x}, "
-            f"instr[31:2]=0x{int(dut.debug_instr.value):08x}, "
+            f"t1 no recibió 0x00400000; valor final: {dut.debug_x6.value}, "
+            f"PC={dut.debug_pc.value}, "
+            f"flash_rdata={dut.debug_flash_rdata.value}, "
+            f"flash_raw={dut.debug_flash_raw.value}, "
+            f"instr[31:2]={dut.debug_instr.value}, "
             f"lecturas SPI={flash.reads}, historial={history}"
         )
 

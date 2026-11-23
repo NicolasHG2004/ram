@@ -45,9 +45,10 @@ wire [31:0] debug_x2_dato_wr   = dut.femto0.CPU.registerFile[2];
 wire [31:0] debug_x3_dato_rd   = dut.femto0.CPU.registerFile[3];
 wire        debug_sram_csb0    = dut.femto0.u_sram.csb0;
 wire        debug_sram_web0    = dut.femto0.u_sram.web0;
-wire [3:0]  debug_sram_addr0   = dut.femto0.u_sram.addr0;
-wire [8:0]  debug_sram_din0    = dut.femto0.u_sram.din0;
-wire [8:0]  debug_sram_dout0   = dut.femto0.u_sram.dout0;
+wire [3:0]  debug_sram_wmask0  = dut.femto0.u_sram.wmask0;
+wire [4:0]  debug_sram_addr0   = dut.femto0.u_sram.addr0;
+wire [32:0] debug_sram_din0    = dut.femto0.u_sram.din0;
+wire [32:0] debug_sram_dout0   = dut.femto0.u_sram.dout0;
 
 tt_um_femto dut (
     .ui_in(ui_in),

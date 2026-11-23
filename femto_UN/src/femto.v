@@ -125,14 +125,14 @@ module femto (
    wire [31:0] uart_dout;
    // wire [31:0] dpram_dout;
 
-   // ============== OpenRAM Internal SRAM (16x8) ========================
-   wire [8:0] sram_dout_raw;
-   wire [7:0] sram_dout = sram_dout_raw[7:0];
+   // ============== OpenRAM Internal SRAM (32x32) =======================
+   wire [32:0] sram_dout_raw;
+   wire [31:0] sram_dout = sram_dout_raw[31:0];
    wire sram_cs = (mem_address[31:16] == 16'h0041);
    wire sram_csb = ~(sram_cs & (mem_rstrb | wr));
    wire sram_web = ~(sram_cs & wr);
 
-   sky130_sram_16x8 u_sram(
+   sky130_sram_32x32 u_sram(
 `ifdef USE_POWER_PINS
       .vccd1(1'b1),
       .vssd1(1'b0),
@@ -140,9 +140,10 @@ module femto (
       .clk0(clk),
       .csb0(sram_csb),
       .web0(sram_web),
+      .wmask0(mem_wmask),
       .spare_wen0(1'b0),
-      .addr0(mem_address[5:2]),
-      .din0({1'b0, mem_wdata[7:0]}),
+      .addr0(mem_address[6:2]),
+      .din0({1'b0, mem_wdata[31:0]}),
       .dout0(sram_dout_raw)
    );
 
@@ -172,7 +173,7 @@ module femto (
       case (mem_address[31:16])	// direcciones - chip_select
         16'h0000: cs= 7'b0000001; 	//RAM
         16'h0040: cs= 7'b0100000; 	//uart
-        16'h0041: cs= 7'b0010000;	//OpenRAM (16x8)
+        16'h0041: cs= 7'b0010000;	//OpenRAM (32x32)
 //        16'h0042: cs= 7'b0001000;	//mult
 //        16'h0043: cs= 7'b0000100;	//div
 //        16'h0044: cs= 7'b0000010;	//bin_to_bcd
@@ -186,7 +187,7 @@ module femto (
       case (cs)
         7'b1000000: mem_rdata = dpram_dout;
         7'b0100000: mem_rdata = uart_dout;
-        7'b0010000: mem_rdata = {24'd0, sram_dout};
+        7'b0010000: mem_rdata = sram_dout;
 //        7'b0001000: mem_rdata = mult_dout;
 //        7'b0000100: mem_rdata = div_dout;
 //        7'b0000010: mem_rdata = bin2bcd_dout;

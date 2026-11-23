@@ -1,0 +1,65 @@
+[2026-11-21 22:20:44.528985] WARNING: file globals.py: line 174: Failed to find coverage installation. This can be installed with pip3 install coverage
+
+[2026-11-21 22:21:04.401759] |==============================================================================|
+[2026-11-21 22:21:04.404477] |=========                      OpenRAM v1.2.50                       =========|
+[2026-11-21 22:21:04.405274] |=========                                                            =========|
+[2026-11-21 22:21:04.405819] |=========               VLSI Design and Automation Lab               =========|
+[2026-11-21 22:21:04.406366] |=========        Computer Science and Engineering Department         =========|
+[2026-11-21 22:21:04.407251] |=========            University of California Santa Cruz             =========|
+[2026-11-21 22:21:04.407688] |=========                                                            =========|
+[2026-11-21 22:21:04.407995] |=========          Usage help: openram-user-group@ucsc.edu           =========|
+[2026-11-21 22:21:04.408337] |========= Development help: https://github.com/VLSIDA/OpenRAM/issues =========|
+[2026-11-21 22:21:04.408705] |=========                See LICENSE for license info                =========|
+[2026-11-21 22:21:04.408994] |==============================================================================|
+[2026-11-21 22:21:04.409385] ** Start: 11/21/2026 22:21:04
+[2026-11-21 22:21:04.409877] Technology: sky130A
+[2026-11-21 22:21:04.410227] Total size: 1024 bits
+[2026-11-21 22:21:04.410658] Word size: 32
+Words: 32
+Banks: 1
+[2026-11-21 22:21:04.411153] Write size: 8
+[2026-11-21 22:21:04.411580] RW ports: 1
+R-only ports: 0
+W-only ports: 0
+[2026-11-21 22:21:04.411984] DRC/LVS/PEX is only run on the top-level design to save run-time (inline_lvsdrc=True to do inline checking).
+[2026-11-21 22:21:04.412354] Characterization is disabled (using analytical delay models) (analytical_delay=False to simulate).
+[2026-11-21 22:21:04.413289] Only generating nominal corner timing.
+[2026-11-21 22:21:04.414228] Words per row: 1
+[2026-11-21 22:21:04.414926] Output files are: 
+[2026-11-21 22:21:04.415710] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.lvs
+[2026-11-21 22:21:04.416085] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.sp
+[2026-11-21 22:21:04.416361] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.v
+[2026-11-21 22:21:04.416588] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.lib
+[2026-11-21 22:21:04.416773] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.py
+[2026-11-21 22:21:04.416943] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.html
+[2026-11-21 22:21:04.417137] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.log
+[2026-11-21 22:21:04.417366] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.lef
+[2026-11-21 22:21:04.417626] /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.gds
+[2026-11-21 22:21:08.719532] ** Submodules: 4.0 seconds
+[2026-11-21 22:21:08.847445] ** Placement: 0.1 seconds
+[2026-11-21 22:23:59.970298] ** Routing: 171.1 seconds
+[2026-11-21 22:25:05.596098] WARNING: file magic.py: line 259: DRC Errors sky130_sram_32x32	779
+
+[2026-11-21 22:26:05.482325] ERROR: file magic.py: line 392: sky130_sram_32x32	LVS mismatch (results in /tmp/openram_daniell_14718_temp/sky130_sram_32x32.lvs.report)
+
+[2026-11-21 22:26:05.535286] ** Verification: 125.5 seconds
+[2026-11-21 22:26:05.535512] ** SRAM creation: 300.8 seconds
+[2026-11-21 22:26:05.535649] SP: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.sp
+[2026-11-21 22:26:06.098610] ** Spice writing: 0.6 seconds
+[2026-11-21 22:26:06.098776] DELAY: Writing stimulus...
+[2026-11-21 22:26:07.023513] ** DELAY: 0.9 seconds
+[2026-11-21 22:26:07.131906] GDS: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.gds
+[2026-11-21 22:26:07.567023] ** GDS: 0.4 seconds
+[2026-11-21 22:26:07.567542] LEF: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.lef
+[2026-11-21 22:26:07.671442] ** LEF: 0.1 seconds
+[2026-11-21 22:26:07.671682] LVS: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.lvs.sp
+[2026-11-21 22:26:07.846286] ** LVS writing: 0.2 seconds
+[2026-11-21 22:26:07.846485] LIB: Characterizing... 
+[2026-11-21 22:26:08.361729] ** Characterization: 0.5 seconds
+[2026-11-21 22:26:08.381444] Config: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.py
+[2026-11-21 22:26:08.381983] ** Config: 0.0 seconds
+[2026-11-21 22:26:08.492816] Datasheet: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.html
+[2026-11-21 22:26:08.517241] ** Datasheet: 0.1 seconds
+[2026-11-21 22:26:08.517753] Verilog: Writing to /home/daniell/Desktop/TEMAS_AVANZADOS/open_ram/OpenRAM/macro_32x32/sky130_sram_32x32.v
+[2026-11-21 22:26:08.519194] ** Verilog: 0.0 seconds
+[2026-11-21 22:26:08.646197] ** End: 304.2 seconds

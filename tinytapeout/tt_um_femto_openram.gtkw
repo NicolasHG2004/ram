@@ -1,0 +1,41 @@
+[*]
+[*] GTKWave Analyzer v3.3
+[*]
+[dumpfile] "tt_um_femto_openram.vcd"
+[savefile] "tt_um_femto_openram.gtkw"
+[timestart] 0
+[size] 1280 720
+[pos] -1 -1
+*-24.000000 65000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tt_um_femto_cocotb.
+[sst_width] 280
+[signals_width] 280
+[sst_expanded] 1
+[sst_vpaned_height] 250
+@28
+tt_um_femto_cocotb.clk
+tt_um_femto_cocotb.rst_n
+@22
+tt_um_femto_cocotb.debug_pc[23:0]
+@200
+-Registros CPU
+@22
+tt_um_femto_cocotb.debug_x1_sram_base[31:0]
+tt_um_femto_cocotb.debug_x2_dato_wr[31:0]
+tt_um_femto_cocotb.debug_x3_dato_rd[31:0]
+@200
+-Control OpenRAM 32x32
+@28
+tt_um_femto_cocotb.debug_sram_csb0
+tt_um_femto_cocotb.debug_sram_web0
+@22
+tt_um_femto_cocotb.debug_sram_wmask0[3:0]
+tt_um_femto_cocotb.debug_sram_addr0[4:0]
+tt_um_femto_cocotb.debug_sram_din0[32:0]
+tt_um_femto_cocotb.debug_sram_dout0[32:0]
+@200
+-Periferico UART
+@28
+tt_um_femto_cocotb.uart_tx
+[pattern_trace] 1
+[pattern_trace] 0

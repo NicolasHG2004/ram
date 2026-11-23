@@ -35,16 +35,14 @@ module FemtoRV32(
    input 	 clk,
 
    output reg [31:0] mem_addr,  // address bus
-   output [31:0] mem_wdata, // data to be written
+   output [31:0] mem_wdata,     // data to be written
    output reg [3:0]  mem_wmask, // write mask for the 4 bytes of each word
-   input  [31:0] mem_rdata, // input lines for both data and instr
-   output reg	 mem_rstrb, // active to initiate memory read (used by IO)
-   input 	 mem_rbusy, // asserted if memory is busy reading value
-   input 	 mem_wbusy, // asserted if memory is busy writing value
-
-   input         interrupt_request, // petición de interrupción (activa en alto)
-
-   input 	 reset      // set to 0 to reset the processor
+   input  [31:0] mem_rdata,     // input lines for both data and instr
+   output reg	 mem_rstrb,      // active to initiate memory read (used by IO)
+   input 	 mem_rbusy,         // asserted if memory is busy reading value
+   input 	 mem_wbusy,         // asserted if memory is busy writing value
+   input     interrupt_request, // petición de interrupción (activa en alto)
+   input 	 reset              // set to 0 to reset the processor
 );
 
    parameter RESET_ADDR       = 32'h00000000;
@@ -60,12 +58,6 @@ module FemtoRV32(
 
    reg [3:0] state;
    reg       writeBack;   // escritura en el banco de registros
-   reg  [31:2] instr;
-   wire        funct3IsShift;
-   wire [31:0] writeBackData;
-   wire [31:0] LOAD_data;
-   wire [15:0] LOAD_halfword;
-   wire  [7:0] LOAD_byte;
 
  /***************************************************************************/
  // Instruction decoding.
@@ -111,15 +103,24 @@ module FemtoRV32(
    /***************************************************************************/
 
 
-   reg [31:0] rs1;
-   reg [31:0] rs2;
+   reg [31:0] rs1_ram;
+   reg [31:0] rs2_ram;
+   reg rs1_zero;
+   reg rs2_zero;
+   wire [31:0] rs1 = rs1_zero ? 32'd0 : rs1_ram;
+   wire [31:0] rs2 = rs2_zero ? 32'd0 : rs2_ram;
    
    reg [31:0] registerFile [31:0];
 
-   // Escritura en posedge, al final del ciclo EXECUTE o WAIT_ALU_OR_MEM.
-   // x0 se mantiene en 0 escribiéndolo en cada ciclo.
    always @(posedge clk) begin
-     registerFile[0] <= 32'b0;
+     if (reset && state == WAIT_INSTR && !mem_rbusy) begin
+       rs1_ram <= registerFile[mem_rdata[19:15]];
+       rs2_ram <= registerFile[mem_rdata[24:20]];
+     end
+   end
+
+   // Escritura en posedge, al final del ciclo EXECUTE o WAIT_ALU_OR_MEM.
+   always @(posedge clk) begin
      if (writeBack && rdId != 0)
        registerFile[rdId] <= writeBackData;
    end
@@ -168,7 +169,7 @@ module FemtoRV32(
      (funct3Is[7]  ? aluIn1 & aluIn2                                 : 32'b0) |
      (funct3IsShift ? aluReg                                         : 32'b0) ;
 
-   assign funct3IsShift = funct3Is[1] | funct3Is[5];
+   wire funct3IsShift = funct3Is[1] | funct3Is[5];
 
    always @(posedge clk) begin
       if (!reset) begin
@@ -211,7 +212,7 @@ module FemtoRV32(
    /***************************************************************************/
 
    reg  [ADDR_WIDTH-1:0] PC; // The program counter.
-   // reg [31:2] instr;        // Latched instruction. Note that bits 0 and 1 are
+   reg  [31:2] instr;        // Latched instruction. Note that bits 0 and 1 are
                              // ignored (not used in RV32I base instr set).
 
    wire [ADDR_WIDTH-1:0] PCplus4 = PC + 4;
@@ -297,7 +298,7 @@ module FemtoRV32(
    // The value written back to the register file.
    /***************************************************************************/
 
-   assign writeBackData =
+   wire [31:0] writeBackData  =
       (isSYSTEM            ? CSR_read   : 32'b0) |  // SYSTEM (CSR)
       (isLUI               ? Uimm       : 32'b0) |  // LUI
       (isALU               ? aluOut     : 32'b0) |  // ALUreg, ALUimm
@@ -327,15 +328,15 @@ module FemtoRV32(
    wire LOAD_sign =
 	!instr[14] & (mem_byteAccess ? LOAD_byte[7] : LOAD_halfword[15]);
 
-   assign LOAD_data =
+   wire [31:0] LOAD_data =
          mem_byteAccess ? {{24{LOAD_sign}},     LOAD_byte} :
      mem_halfwordAccess ? {{16{LOAD_sign}}, LOAD_halfword} :
                           mem_rdata ;
 
-   assign LOAD_halfword =
+   wire [15:0] LOAD_halfword =
 	       loadstore_addr[1] ? mem_rdata[31:16] : mem_rdata[15:0];
 
-   assign LOAD_byte =
+   wire  [7:0] LOAD_byte =
 	       loadstore_addr[0] ? LOAD_halfword[15:8] : LOAD_halfword[7:0];
 
    // STORE
@@ -391,8 +392,8 @@ module FemtoRV32(
          state     <= WAIT_ALU_OR_MEM;   // espera !mem_wbusy antes de arrancar
          PC        <= RESET_ADDR[ADDR_WIDTH-1:0];
          instr     <= NOP;
-         rs1       <= 32'b0;
-         rs2       <= 32'b0;
+         rs1_zero  <= 1'b1;
+         rs2_zero  <= 1'b1;
          mem_wmask <= 4'b0000;
          mstatus   <= 1'b0;              // interrupciones deshabilitadas
          mtvec     <= {ADDR_WIDTH{1'b0}};
@@ -409,8 +410,8 @@ module FemtoRV32(
 
             WAIT_INSTR: begin
                if (!mem_rbusy) begin     // puede tardar (flash SPI)
-                  rs1   <= registerFile[mem_rdata[19:15]];
-                  rs2   <= registerFile[mem_rdata[24:20]];
+                  rs1_zero <= (mem_rdata[19:15] == 5'd0);
+                  rs2_zero <= (mem_rdata[24:20] == 5'd0);
                   instr <= mem_rdata[31:2];
                   state <= EXECUTE;
                end
