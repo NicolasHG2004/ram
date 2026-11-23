@@ -132,12 +132,9 @@ module femto (
    wire sram_csb = ~(sram_cs & (mem_rstrb | wr));
    wire sram_web = ~(sram_cs & wr);
 
+   /* verilator lint_off PINMISSING */
    sky130_sram_32x32 u_sram(
-`ifndef COCOTB_SIM
-      .vccd1(),
-      .vssd1(),
-`endif
-      .clk0(clk),
+.clk0(clk),
       .csb0(sram_csb),
       .web0(sram_web),
       .wmask0(mem_wmask),
