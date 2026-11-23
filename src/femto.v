@@ -126,16 +126,19 @@ module femto (
    // wire [31:0] dpram_dout;
 
    // ============== OpenRAM Internal SRAM (32x32) =======================
-   wire [32:0] sram_dout_raw;
+   wire [31:0] sram_dout_raw;
    wire [31:0] sram_dout = sram_dout_raw[31:0];
    wire sram_cs = (mem_address[31:16] == 16'h0041);
    wire sram_csb = ~(sram_cs & (mem_rstrb | wr));
    wire sram_web = ~(sram_cs & wr);
 
    sky130_sram_32x32 u_sram(
-`ifdef USE_POWER_PINS
+`ifdef COCOTB_SIM
       .vccd1(1'b1),
       .vssd1(1'b0),
+`else
+      .vccd1(),
+      .vssd1(),
 `endif
       .clk0(clk),
       .csb0(sram_csb),
